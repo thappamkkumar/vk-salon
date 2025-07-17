@@ -70,6 +70,7 @@ export default function LoginForm() {
 			
        
     } catch (err) {
+		console.log(err);
       setLoading(false);
       setFormErrors({ general: 'An unexpected error occurred. Please try again.' });
     }
