@@ -1,25 +1,19 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useRouter   } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaEnvelope, FaLock, FaSpinner, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginForm() {
-	
-	const router = useRouter();
-	
- 
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
-	const [loading, setLoading] = useState(false);
-  
-	const [formErrors, setFormErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
-	
-	
   const validateForm = () => {
     const errors: typeof formErrors = {};
 
@@ -47,30 +41,25 @@ export default function LoginForm() {
 
     setLoading(true);
 
-    try 
-		{
-		
+    try {
       const res = await signIn('credentials', {
-				email,
-				password,
-				redirect: false,
-				callbackUrl: '/',
-			});
- 
+        email,
+        password,
+        redirect: false,
+        callbackUrl: '/admin/posts',
+      });
+
       setLoading(false);
-			
-			if (res?.ok) {
-        router.push('/');
+
+      if (res?.ok && res.url) {
+        router.push(res.url);
       } else if (res?.error) {
-        // Display error message based on NextAuth error code
-        setFormErrors({ general: errorMessages[res.error] ?? 'Invalid email or password.' });
-      } else {
         setFormErrors({ general: 'Invalid email or password.' });
+      } else {
+        setFormErrors({ general: 'Something went wrong. Try again.' });
       }
-			
-       
     } catch (err) {
-		console.log(err);
+      console.error(err);
       setLoading(false);
       setFormErrors({ general: 'An unexpected error occurred. Please try again.' });
     }
@@ -79,13 +68,13 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleLogin}
-      className="bg-white lg:shadow-2xl p-8 rounded-xl w-full max-w-md  "
+      className="bg-white lg:shadow-2xl p-8 rounded-xl w-full max-w-md"
     >
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Admin Login
       </h2>
-			
-			{formErrors.general && (
+
+      {formErrors.general && (
         <p className="text-red-600 text-center text-sm mb-4">{formErrors.general}</p>
       )}
 
@@ -100,7 +89,7 @@ export default function LoginForm() {
             type="email"
             className={`w-full border rounded-md pl-10 pr-3 py-2 focus:outline-none focus:ring-2 transition-all ${
               formErrors.email
-                ? 'border-red-500 focus:border-gray-300 focus:ring-black'
+                ? 'border-red-500 focus:ring-black'
                 : 'border-gray-300 focus:ring-black'
             }`}
             placeholder="you@example.com"
@@ -122,8 +111,8 @@ export default function LoginForm() {
             type={showPassword ? 'text' : 'password'}
             className={`w-full border rounded-md pl-10 pr-10 py-2 focus:outline-none focus:ring-2 transition-all ${
               formErrors.password
-                ? 'border-red-500 focus:border-gray-300 focus:ring-black'
-                : 'border-gray-300   focus:ring-black'
+                ? 'border-red-500 focus:ring-black'
+                : 'border-gray-300 focus:ring-black'
             }`}
             placeholder="••••••••"
             value={password}
@@ -131,7 +120,7 @@ export default function LoginForm() {
           />
           <button
             type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             onClick={() => setShowPassword((prev) => !prev)}
             tabIndex={-1}
           >
@@ -146,7 +135,7 @@ export default function LoginForm() {
       {/* Submit Button */}
       <button
         type="submit"
-        className={`w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-300 cursor-pointer ${
+        className={`w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-semibold py-2 rounded-md transition duration-300 ${
           loading ? 'opacity-70 cursor-not-allowed' : ''
         }`}
         disabled={loading}

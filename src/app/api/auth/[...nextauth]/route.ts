@@ -1,4 +1,3 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import pool from "@/lib/db";
@@ -13,26 +12,26 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials ?? {};
-
-        if (!email || !password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing credentials");
+        }
 
         try {
           const result = await pool.query(
-            "SELECT id, email, password FROM users WHERE email = $1",
-            [email]
+            "SELECT id, email, password_hash FROM users WHERE email = $1",
+            [credentials.email]
           );
-          const user = result.rows[0];
 
+          const user = result.rows[0];
           if (!user) return null;
 
-          const isValid = await bcrypt.compare(password, user.password);
+          const isValid = await bcrypt.compare(credentials.password, user.password_hash);
           if (!isValid) return null;
 
           return { id: user.id, email: user.email };
         } catch (error) {
           console.error("Authorize error:", error);
-          return null;
+          throw new Error("Server error during login");
         }
       },
     }),
@@ -48,7 +47,7 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (token?.id && session.user) {
+      if (session.user && token.id) {
         session.user.id = token.id;
       }
       return session;
@@ -61,6 +60,5 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Single, correct usage of NextAuth
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
