@@ -1,0 +1,25 @@
+'use client';
+
+import { useContextState } from '@/context/contextState';
+import { FaCloudUploadAlt, FaTimes } from 'react-icons/fa';
+
+export default function UploadingOverlay() {
+  const { uploading, setUploading } = useContextState();
+
+  if (!uploading) return null;
+
+  return (
+    <div className="fixed bottom-6 right-6 z-[9998]">
+      <div className="relative flex items-center gap-3 bg-white shadow-xl px-4 py-3 rounded-xl border-l-4 border-yellow-500">
+        <FaCloudUploadAlt className="text-yellow-500 text-xl animate-bounce" />
+        <span className="text-gray-800 font-medium">Uploading...</span>
+        <button
+          onClick={() => setUploading(false)}
+          className="absolute top-1 right-1 text-gray-400 cursor-pointer hover:text-black transition"
+        >
+          <FaTimes />
+        </button>
+      </div>
+    </div>
+  );
+}
