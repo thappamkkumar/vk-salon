@@ -14,6 +14,7 @@ import {
   FaCalendarAlt,
   FaEnvelope,
   FaUser,
+	FaSignOutAlt 
 } from 'react-icons/fa';
 
 const menuItems = [
@@ -25,6 +26,7 @@ const menuItems = [
   { label: 'Appointments', href: '/admin/appointments', icon: <FaCalendarAlt /> },
   { label: 'Contact', href: '/admin/contact', icon: <FaEnvelope /> },
   { label: 'Profile', href: '/admin/profile', icon: <FaUser /> },
+  { label: 'Logout', href: '/admin/logout', icon: <FaSignOutAlt  /> },
 ];
 
 export default function AdminSidebar() {

@@ -9,7 +9,7 @@ export default async function ProfilePage() {
 
   // ?? Redirect if not logged in
   if (!session || !session.user) {
-    redirect("/admin/login");
+    redirect("/login");
   }
 
   const userId = session.user.id;

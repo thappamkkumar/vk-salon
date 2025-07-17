@@ -60,8 +60,8 @@ export const authOptions: AuthOptions = {
   },
 
   pages: {
-    signIn: "/admin/login",
-    error: "/admin/login", // You can customize this
+    signIn: "/login",
+    error: "/login", // You can customize this
   },
 
   secret: process.env.NEXTAUTH_SECRET,
