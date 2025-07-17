@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Lora,   Inter } from "next/font/google";
 import "./globals.css";
-import Footer from '@/components/footer/Footer';	
-import Navigation from '@/components/header/Navigation';
+
 import UploadingOverlay from '@/components/actionProccessing/UploadingOverlay';
 import DeletingOverlay from '@/components/actionProccessing/DeletingOverlay';
 import 	MessageBox from '@/components/alertBox/MessageBox';
@@ -47,9 +46,9 @@ export default function RootLayout({
 					<MessageBox  />
           <UploadingOverlay />  
           <DeletingOverlay />  
-					<Navigation />
+					 
 					{children}
-					<Footer />
+					
 				</ContextStateProvider>
 			
 			  

@@ -17,11 +17,11 @@ import { NavItem } from '@/types/naviagtion';
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
+	const pathname = usePathname();
 	
-	const isAdminRoute = pathname.startsWith("/admin");
+	//const isAdminRoute = pathname.startsWith("/admin");
 
-  if (isAdminRoute) return null;
+  //if (isAdminRoute) return null;
 	
 
   const navItems: NavItem[] = [
