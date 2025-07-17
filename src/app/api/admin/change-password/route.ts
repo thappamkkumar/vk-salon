@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Pool } from "pg";
 
 const pool = new Pool({
@@ -9,14 +11,21 @@ const pool = new Pool({
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ status: false, message: "Unauthorized." }, { status: 401 });
+    }
+
+    const userId = session.user.id;
     const { currentPassword, newPassword } = await req.json();
 
     if (!currentPassword || !newPassword || newPassword.length < 6) {
       return NextResponse.json({ status: false, message: "Invalid input." }, { status: 400 });
     }
 
-    // Fetch existing hashed password for admin (id = 1)
-    const result = await pool.query("SELECT password_hash FROM users WHERE id = $1", [1]);
+    // Get user's current password hash
+    const result = await pool.query("SELECT password_hash FROM users WHERE id = $1", [userId]);
     const user = result.rows[0];
 
     if (!user) {
@@ -29,11 +38,11 @@ export async function POST(req: NextRequest) {
     }
 
     const newHashed = await bcrypt.hash(newPassword, 12);
-    await pool.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHashed, 1]);
+    await pool.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHashed, userId]);
 
     return NextResponse.json({ status: true, message: "Password updated successfully." });
   } catch (error) {
     console.error("Password update error:", error);
-    return NextResponse.json({ status: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json({ status: false, message: "Server error." }, { status: 500 });
   }
 }

@@ -29,7 +29,7 @@ export default function UpdateEmailForm() {
     const res = await fetch("/api/admin/update-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: 1, email }),
+      body: JSON.stringify({ email }),
     });
 
     const data = await res.json();

@@ -18,7 +18,7 @@ export const authOptions: AuthOptions = {
 
         try {
           const result = await pool.query(
-            "SELECT id, email, password_hash FROM users WHERE email = $1",
+            "SELECT id, email, role, password_hash FROM users WHERE email = $1",
             [credentials.email]
           );
 
@@ -28,7 +28,7 @@ export const authOptions: AuthOptions = {
           const isValid = await bcrypt.compare(credentials.password, user.password_hash);
           if (!isValid) return null;
 
-          return { id: user.id, email: user.email };
+          return { id: user.id, email: user.email, role: user.role };
         } catch (error) {
           console.error("Authorize error:", error);
           throw new Error("Server error during login");
@@ -36,27 +36,34 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+
   session: {
     strategy: "jwt",
   },
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
+
     async session({ session, token }) {
       if (session.user && token.id) {
-        session.user.id = token.id;
+        session.user.id = token.id as number;
+        session.user.role = token.role as string;
       }
       return session;
     },
   },
+
   pages: {
     signIn: "/admin/login",
-    error: "/admin/login",
+    error: "/admin/login", // You can customize this
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 
