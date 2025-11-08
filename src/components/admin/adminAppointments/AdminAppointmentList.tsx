@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+//import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useContextState } from '@/context/contextState';
 import { FaEllipsisV, FaInfoCircle, FaTrash,FaPhone } from 'react-icons/fa';
@@ -61,8 +61,7 @@ const AdminAppointmentList = ({ appointmentList, onDelete, selectAppointment }: 
         
  
        
-    } catch (err) {
-      //console.error('Delete error:', err);
+    } catch  { 
       setMessageBox({
 					message: 'Error deleting appointment.',
 					type: 'error',

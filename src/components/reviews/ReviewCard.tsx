@@ -5,10 +5,16 @@ import { FaStar  } from 'react-icons/fa';
 
 import { Review } from '@/types/reviews';
 
+
+
+
  
-const ReviewCard = ({ review } : {Review}) => {
+/*const ReviewCard = ({ review } : {Review}) => {*/
+
+
 	
-	 
+const ReviewCard = ({ review }: { review: Review }) => {
+ 
 	
 	return(
 		 

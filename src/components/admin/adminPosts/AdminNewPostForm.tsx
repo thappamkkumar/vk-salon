@@ -158,7 +158,7 @@ export default function AdminNewPostForm() {
 				});
 			}
 		}
-		catch(error)
+		catch
 		{ 
 			setMessageBox({
 					message: 'Something went wrong.',

@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       RETURNING *;
     `;
 
-    const result = await pool.query(insertQuery, [fullName, phoneNumber, message]);
+    await pool.query(insertQuery, [fullName, phoneNumber, message]);
 
     return NextResponse.json(
       {
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest): Promise<NextResponse>
 		const direction = searchParams.get('direction') || 'next'; // 'next' or 'prev'
 		const limit = 20;
 		
-		let query = `
+		const query = `
 			SELECT * FROM appointments
 			WHERE $1::int IS NULL OR 
 				${direction === 'next' ? 'id < $1' : 'id > $1'}
@@ -84,7 +84,7 @@ export async function GET(req: NextRequest): Promise<NextResponse>
 			// For prev, reverse the order to maintain consistency
 			if (direction === 'prev') appointmentData.reverse();
 			
-			const mappedAppointmentData = appointmentData.map((appointment: any) => {
+			const mappedAppointmentData = appointmentData.map((appointment) => {
 				const formattedDate = new Date(appointment.created_at).toLocaleDateString('en-GB', {
 					day: '2-digit',
 					month: 'long', // "May"
@@ -122,12 +122,12 @@ export async function GET(req: NextRequest): Promise<NextResponse>
 			
 			if (nextCursor !== null) {
 				const nextRes = await pool.query(hasNextQuery, [nextCursor]);
-				hasNext = nextRes.rowCount > 0;
+				hasNext = (nextRes.rowCount ?? 0)  > 0;
 			}
 
 			if (prevCursor !== null) {
 				const prevRes = await pool.query(hasPrevQuery, [prevCursor]);
-				hasPrev = prevRes.rowCount > 0;
+				hasPrev = (prevRes.rowCount ?? 0)  > 0;
 			}
 
 			return NextResponse.json({

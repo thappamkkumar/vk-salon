@@ -10,21 +10,8 @@ export default function Footer() {
 
 	const isAdminRoute = pathname.startsWith("/admin");
 
-  if (isAdminRoute) return null;
+  
 	
-  const handleAnchorClick = (hash: string) => {
-    const id = hash.replace('#', '');
-    if (pathname === '/') {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      // Navigate to home with hash, scroll handled by useEffect
-      router.push(`/#${id}`);
-    }
-  };
-
   useEffect(() => {
     if (pathname === '/') {
       const hash = window.location.hash;
@@ -44,6 +31,21 @@ export default function Footer() {
       }
     }
   }, [pathname]);
+  const handleAnchorClick = (hash: string) => {
+    const id = hash.replace('#', '');
+    if (pathname === '/') {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to home with hash, scroll handled by useEffect
+      router.push(`/#${id}`);
+    }
+  };
+
+	if (isAdminRoute) return null;
+
 
   return (
     <footer className="bg-gradient-to-r from-black via-gray-900 to-black text-white px-6 py-12">

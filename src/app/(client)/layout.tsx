@@ -2,7 +2,7 @@
 
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 
 
 import Navigation from '@/components/header/Navigation';
@@ -12,9 +12,17 @@ export default async function ClientLayout({ children }: { children: React.React
 
 	const session = await getServerSession(authOptions);
 
-  if (session && session.user.role === 'admin') {
-    redirect('/admin/posts');
+	const user = session?.user as { id?: number; role?: string } | undefined;
+
+  if (user?.role === "admin") {
+    redirect("/admin/posts");
   }
+ 
+ 
+ 
+/* if (session && session?.user?.role === 'admin') {
+    redirect('/admin/posts');
+  }*/
 	
 	
   return (

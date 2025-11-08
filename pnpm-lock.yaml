@@ -42,9 +42,15 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.5
+      '@types/bcrypt':
+        specifier: ^6.0.0
+        version: 6.0.0
       '@types/node':
         specifier: ^20
         version: 20.17.41
+      '@types/pg':
+        specifier: ^8.15.6
+        version: 8.15.6
       '@types/react':
         specifier: ^19
         version: 19.1.3
@@ -59,7 +65,7 @@ importers:
         version: 15.3.1(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.3)
       node-pg-migrate:
         specifier: ^7.9.1
-        version: 7.9.1(pg@8.16.0)
+        version: 7.9.1(@types/pg@8.15.6)(pg@8.16.0)
       tailwindcss:
         specifier: ^4
         version: 4.1.5
@@ -470,6 +476,9 @@ packages:
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
 
+  '@types/bcrypt@6.0.0':
+    resolution: {integrity: sha512-/oJGukuH3D2+D+3H4JWLaAsJ/ji86dhRidzZ/Od7H/i8g+aCmvkeCc6Ni/f9uxGLSQVCRZkX2/lqEFG2BvWtlQ==}
+
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
 
@@ -481,6 +490,9 @@ packages:
 
   '@types/node@20.17.41':
     resolution: {integrity: sha512-bOB0a6u/e7Ey/Gyc+ghRg+xoXFGYug4I7pdvwxudh+Ewmk93Z4wTudn4NIKiIRYQyujf9jm2uTBzQK8tg8oUeQ==}
+
+  '@types/pg@8.15.6':
+    resolution: {integrity: sha512-NoaMtzhxOrubeL/7UZuNTrejB4MPAJ0RpxZqXQf2qXuVlTPuG6Y8p4u9dKRaue4yjmC7ZhzVO2/Yyyn25znrPQ==}
 
   '@types/react-dom@19.1.3':
     resolution: {integrity: sha512-rJXC08OG0h3W6wDMFxQrZF00Kq6qQvw0djHRdzl3U5DnIERz0MRce3WVc7IS6JYBwtaP/DwYtRRjVlvivNveKg==}
@@ -2620,6 +2632,10 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@types/bcrypt@6.0.0':
+    dependencies:
+      '@types/node': 20.17.41
+
   '@types/estree@1.0.7': {}
 
   '@types/json-schema@7.0.15': {}
@@ -2629,6 +2645,12 @@ snapshots:
   '@types/node@20.17.41':
     dependencies:
       undici-types: 6.19.8
+
+  '@types/pg@8.15.6':
+    dependencies:
+      '@types/node': 20.17.41
+      pg-protocol: 1.10.0
+      pg-types: 2.2.0
 
   '@types/react-dom@19.1.3(@types/react@19.1.3)':
     dependencies:
@@ -3953,11 +3975,13 @@ snapshots:
 
   node-gyp-build@4.8.4: {}
 
-  node-pg-migrate@7.9.1(pg@8.16.0):
+  node-pg-migrate@7.9.1(@types/pg@8.15.6)(pg@8.16.0):
     dependencies:
       glob: 11.0.2
       pg: 8.16.0
       yargs: 17.7.2
+    optionalDependencies:
+      '@types/pg': 8.15.6
 
   oauth@0.9.15: {}
 

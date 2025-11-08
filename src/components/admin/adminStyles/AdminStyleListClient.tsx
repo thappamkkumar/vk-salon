@@ -48,7 +48,7 @@ export default function AdminStyleListClient({
 			
 			
 			
-		} catch (error) {
+		} catch {
      // console.error('Pagination fetch error:', error);
     }finally {
       setLoading(false); // End loading

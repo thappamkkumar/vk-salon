@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
 
-import { Post, Attachment } from '@/types/posts';
+//import { Post, Attachment } from '@/types/posts';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -46,7 +46,10 @@ export async function POST(req: NextRequest) {
 
     const savedFiles = [];
 		
-		 for (const [_, value] of formData.entries()) {
+		/* for (const [_, value] of formData.entries()) {*/
+		
+		for (const value of formData.values()) {
+
       if (!(value instanceof File)) continue;
 
       const ext = getExtension(value.type);
@@ -87,8 +90,9 @@ export async function POST(req: NextRequest) {
       VALUES ($1)
       RETURNING *;
     `;
-    const result = await pool.query(insertQuery, [JSON.stringify(savedFiles)]);
-    const newPost = result.rows[0];
+    
+		await pool.query(insertQuery, [JSON.stringify(savedFiles)]);
+    //const newPost = result.rows[0];
 		
     return NextResponse.json({ message: 'Post created successfully' , status: true});
   } catch (error) {
@@ -118,16 +122,16 @@ export async function GET(req: NextRequest) {
 
   try {
     const result = await pool.query(query, values);
-    let posts = result.rows;
+    const posts = result.rows;
 
     // Reverse if direction is 'prev' to maintain ascending order in UI
     if (direction === 'prev') posts.reverse();
 
-    const mappedPosts = posts.map((post: any) => {
+    const mappedPosts = posts.map((post) => {
       const basePath = '/vendor/posts/';
       const thumbPath = '/vendor/post_video_thumbnail/';
-      const mappedAttachments = post.attachment.map((att: any) => {
-        const updated: any = {
+      const mappedAttachments = post.attachment.map((att) => {
+        const updated = {
           ...att,
           fileName: `${basePath}${att.fileName}`,
         };
@@ -171,12 +175,12 @@ export async function GET(req: NextRequest) {
 
     if (nextCursor !== null) {
       const nextRes = await pool.query(hasNextQuery, [nextCursor]);
-      hasNext = nextRes.rowCount > 0;
+      hasNext = ( nextRes.rowCount ?? 0 ) > 0;
     }
 
     if (prevCursor !== null) {
       const prevRes = await pool.query(hasPrevQuery, [prevCursor]);
-      hasPrev = prevRes.rowCount > 0;
+      hasPrev = ( prevRes.rowCount ?? 0 ) > 0;
     }
 
     return NextResponse.json({

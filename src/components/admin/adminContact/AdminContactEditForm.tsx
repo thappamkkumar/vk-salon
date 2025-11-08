@@ -64,11 +64,11 @@ export default function AdminContactEditForm({ contact, onCancel, onSave }: Prop
         return;
       }
 
-      const rdata = await res.json();
+       await res.json();
       setMessageBox({ message: 'Contact updated successfully.', type: 'success' });
       onSave(formData);
-    } catch (error) {
-      console.error(error);
+    } catch	 {
+     // console.error(error);
       setMessageBox({ message: 'Error updating contact.', type: 'error' });
     } finally {
       setUploading(false);
@@ -91,7 +91,7 @@ export default function AdminContactEditForm({ contact, onCancel, onSave }: Prop
           <input
             type="text"
             name={name}
-            value={(formData as any)[name] || ''}
+            value={formData[name] || ''}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />

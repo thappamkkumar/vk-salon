@@ -2,8 +2,7 @@
 
 import AppointmentContact  from './AppointmentContact';
 import AppointmentMessageForm  from './AppointmentMessageForm';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope  } from 'react-icons/fa';
-
+ 
 import {  Contact} from '@/types/contact';
  
 

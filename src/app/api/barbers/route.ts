@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
  
-import {Barber} from '@/types/barbers';
+//import {Barber} from '@/types/barbers';
  
 
 const pool = new Pool({
@@ -58,7 +58,8 @@ export async function POST(req: NextRequest) {
 
     // Insert into DB
     const insertQuery = `INSERT INTO barbers (name, contact, experience, image) VALUES ($1, $2, $3, $4) RETURNING *;`;
-		const result = await pool.query(insertQuery, [name, contact, experience, fileName]);
+		
+		await pool.query(insertQuery, [name, contact, experience, fileName]);
 
     
     return NextResponse.json({
@@ -79,7 +80,7 @@ export async function GET(req: NextRequest) {
   const direction = searchParams.get('direction') || 'next'; // 'next' or 'prev'
   const limit = 20;
 
-  let query = `
+  const query = `
     SELECT * FROM barbers
     WHERE $1::int IS NULL OR 
       ${direction === 'next' ? 'id < $1' : 'id > $1'}
@@ -96,7 +97,7 @@ export async function GET(req: NextRequest) {
     // For prev, reverse the order to maintain consistency
     if (direction === 'prev') barberData.reverse();
 		
-		const mappedBarberData = barberData.map((barber: any) => {
+		const mappedBarberData = barberData.map((barber) => {
 			const formattedDate = new Date(barber.created_at).toLocaleDateString('en-GB', {
 				day: '2-digit',
 				month: 'long', // "May"
@@ -135,12 +136,12 @@ export async function GET(req: NextRequest) {
 
     if (nextCursor !== null) {
       const nextRes = await pool.query(hasNextQuery, [nextCursor]);
-      hasNext = nextRes.rowCount > 0;
+      hasNext = ( nextRes.rowCount ?? 0 ) > 0;
     }
 
     if (prevCursor !== null) {
       const prevRes = await pool.query(hasPrevQuery, [prevCursor]);
-      hasPrev = prevRes.rowCount > 0;
+      hasPrev = ( prevRes.rowCount ?? 0 ) > 0;
     }
 
     return NextResponse.json({

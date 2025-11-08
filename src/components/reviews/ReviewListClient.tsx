@@ -46,7 +46,7 @@ export default function ReviewListClient({
 			
 			
 			
-		} catch (error) {
+		} catch  {
      // console.error('Pagination fetch error:', error);
     }finally {
       setLoading(false); // End loading
@@ -55,10 +55,10 @@ export default function ReviewListClient({
 	
 	 
 	
-	const selectReview  = (index: number)=>{
+	/*const selectReview  = (index: number)=>{
 		setSelectedReviewIndex(index);
 		 
-	}
+	}*/
 	
   return (
     <div className="px-2 md:px-5 lg:px-8 xl:px-15 pt-5 pb-20 min-h-screen">

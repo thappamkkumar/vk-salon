@@ -98,7 +98,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
 }
 
 // --- GET: Retrieve latest contact ---
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   try {
     const query = `SELECT * FROM contact ORDER BY created_at DESC LIMIT 1`;
     const result = await pool.query(query);
@@ -129,7 +129,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       facebook_url,
     };
 
-    return NextResponse.json({ contact });
+    return NextResponse.json( contact );
   } catch (error) {
     console.error('GET /api/admin/contact error:', error);
     return NextResponse.json({ error: 'Database error' }, { status: 500 });

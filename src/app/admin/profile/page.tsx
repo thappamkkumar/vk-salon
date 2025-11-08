@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
 	
 	const session = await getServerSession(authOptions);
-
+	const sessionUser = session?.user as { id?: number; role?: string } | undefined;
+ 
   // ?? Redirect if not logged in
-  if (!session || !session.user) {
+  if (!sessionUser) {
     redirect("/login");
   }
 
-  const userId = session.user.id;
+  const userId =  sessionUser?.id;
 	
 	
   const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/profile`);

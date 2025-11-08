@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useContextState } from '@/context/contextState';
-import { FaEllipsisV, FaInfoCircle, FaTrash } from 'react-icons/fa';
+import { FaEllipsisV,   FaTrash } from 'react-icons/fa';
 import { Service } from '@/types/services';
 import ConfirmDialog from '@/components/alertBox/ConfirmDialog';
 
@@ -63,7 +63,7 @@ const AdminServicesList = ({ serviceList, onDelete, selectService }: Props) => {
        
 
        
-    } catch (err) {
+    } catch  {
       //console.error('Delete error:', err);
       setMessageBox({
 					message: 'Error deleting style.',

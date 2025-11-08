@@ -50,7 +50,7 @@ export default function AdminPostListClient({
 			
 			
 			
-		} catch (error) {
+		} catch {
      // console.error('Pagination fetch error:', error);
     }finally {
       setLoading(false); // End loading

@@ -11,7 +11,7 @@ export default async function ContactPage() {
 	return (
 		 
 			<section className="  pt-6 pb-20  ">
-				<AdminContactListWrapper contact={contactData.contact}  />
+				<AdminContactListWrapper contact={contactData}  />
 			</section>
      
   );

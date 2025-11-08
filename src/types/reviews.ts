@@ -8,7 +8,7 @@ export type Review = {
 	create_at?:string;
 };
 
-export type ReviewResponse =s {
+export type ReviewResponse = {
   Review: Review[];
   nextCursor: number | null;
   prevCursor: number | null;

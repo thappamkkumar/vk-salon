@@ -59,7 +59,8 @@ export async function POST(req: NextRequest) {
 
     // Insert into DB
     const insertQuery = `INSERT INTO services (title, price, image) VALUES ($1, $2, $3) RETURNING *;`;
-    const result = await pool.query(insertQuery, [title, price, fileName]);
+    
+		await pool.query(insertQuery, [title, price, fileName]);
 
     return NextResponse.json({
       message: 'Service created successfully',
@@ -83,7 +84,7 @@ export async function GET(req: NextRequest): Promise<NextResponse>
 		const direction = searchParams.get('direction') || 'next'; // 'next' or 'prev'
 		const limit = 20;
 		
-		let query = `
+		const query = `
 			SELECT * FROM services
 			WHERE $1::int IS NULL OR 
 				${direction === 'next' ? 'id < $1' : 'id > $1'}
@@ -101,7 +102,7 @@ export async function GET(req: NextRequest): Promise<NextResponse>
 			// For prev, reverse the order to maintain consistency
 			if (direction === 'prev') serviceData.reverse();
 			
-			const mappedServiceData = serviceData.map((service: any) => {
+			const mappedServiceData = serviceData.map((service) => {
 				const formattedDate = new Date(service.created_at).toLocaleDateString('en-GB', {
 					day: '2-digit',
 					month: 'long', // "May"
@@ -139,12 +140,12 @@ export async function GET(req: NextRequest): Promise<NextResponse>
 			
 			if (nextCursor !== null) {
 				const nextRes = await pool.query(hasNextQuery, [nextCursor]);
-				hasNext = nextRes.rowCount > 0;
+				hasNext = ( nextRes.rowCount ?? 0 ) > 0;
 			}
 
 			if (prevCursor !== null) {
 				const prevRes = await pool.query(hasPrevQuery, [prevCursor]);
-				hasPrev = prevRes.rowCount > 0;
+				hasPrev = ( prevRes.rowCount ?? 0 ) > 0;
 			}
 
 			return NextResponse.json({

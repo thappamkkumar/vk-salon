@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { Pool } from "pg";
 
 const pool = new Pool({
@@ -12,12 +12,13 @@ const pool = new Pool({
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+		const sessionUser = session?.user as { id?: number; role?: string } | undefined;
 
-    if (!session || !session.user || !session.user.id) {
+    if (!sessionUser) {
       return NextResponse.json({ status: false, message: "Unauthorized." }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = sessionUser.id;
     const { currentPassword, newPassword } = await req.json();
 
     if (!currentPassword || !newPassword || newPassword.length < 6) {

@@ -119,7 +119,7 @@ export default function NewReviewForm() {
           type: 'error',
         });
       }
-    } catch (error) {
+    } catch  {
       setMessageBox({
         message: 'Something went wrong.',
         type: 'error',

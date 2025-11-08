@@ -1,24 +1,4 @@
-
-
-
-
-import NextAuth from "next-auth";
-import { authOptions } from "./options";
-
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
-
-
-
-
-
-
-
-
-/*
-import NextAuth, { AuthOptions } from "next-auth";
+import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import pool from "@/lib/db";
 import bcrypt from "bcrypt";
@@ -45,7 +25,10 @@ export const authOptions: AuthOptions = {
           const user = result.rows[0];
           if (!user) return null;
 
-          const isValid = await bcrypt.compare(credentials.password, user.password_hash);
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            user.password_hash
+          );
           if (!isValid) return null;
 
           return { id: user.id, email: user.email, role: user.role };
@@ -64,16 +47,20 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
+       const customUser = user as unknown as { id: number; role: string };
+			token.id = customUser.id;
+			token.role = customUser.role;
       }
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user && token.id) {
-        session.user.id = token.id as number;
-        session.user.role = token.role as string;
+			const sessionUser = session?.user as { id?: number; role?: string } | undefined;
+			const customToken = token as { id?: number; role?: string };
+
+      if (sessionUser && customToken.id) {
+        sessionUser.id = customToken.id;
+        sessionUser.role = customToken.role;
       }
       return session;
     },
@@ -81,12 +68,8 @@ export const authOptions: AuthOptions = {
 
   pages: {
     signIn: "/login",
-    error: "/login", // You can customize this
+    error: "/login",
   },
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
-*/

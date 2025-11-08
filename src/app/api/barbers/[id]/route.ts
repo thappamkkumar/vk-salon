@@ -10,9 +10,13 @@ const pool = new Pool({
 
 //export const dynamic = 'force-dynamic';
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const barberId = Number(params.id);
-	
+export async function DELETE( 
+	req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+	const { id } = await params;   
+  const barberId = Number(id);
+
 
   if (isNaN(barberId)) {
     return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });

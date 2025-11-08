@@ -1,8 +1,7 @@
-import Image from 'next/image';
+ 
 import ServiceCarousel from './ServiceCarousel';
 import {Service} from '@/types/services';
-import { fetchServices } from '@/lib/fetch/getServices';  
-import { Service,   } from '@/types/services';
+ 
 
  
 

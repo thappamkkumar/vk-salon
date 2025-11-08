@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
 
 const pool = new Pool({
@@ -15,7 +15,7 @@ async function fetchServices() {
   `;
   const result = await pool.query(query);
 
-  return result.rows.map((service: any) => { 
+  return result.rows.map((service) => { 
     return {
       id: service.id,
       title: service.title,
@@ -61,7 +61,7 @@ async function fetchBarbers() {
   const result = await pool.query(query);
 
 
-  return result.rows.map((barber: any) => {
+  return result.rows.map((barber) => {
      
 
     return {
@@ -85,7 +85,7 @@ async function fetchReviews() {
   const result = await pool.query(query);
 
 
-  return result.rows.map((review: any) => {
+  return result.rows.map((review) => {
       
     return {
 			id: review.id,
@@ -103,7 +103,7 @@ async function fetchReviews() {
 
 
 // --- API Route Handler ---
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   try {
     const [services, contact, barbers, reviews] = await Promise.all([
       fetchServices(),

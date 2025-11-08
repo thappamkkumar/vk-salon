@@ -6,7 +6,7 @@ import AdminReviewList from './AdminReviewList';
 import AdminReviewCard from './AdminReviewCard';
 import PaginationControls from '@/components/pagination/PaginationControls';
 import Spinner from '@/components/loader/Spinner';
-import StyleCarousel from '@/components/styles/StyleCarousel';
+//import StyleCarousel from '@/components/styles/StyleCarousel';
 
 import {Review,  ReviewResponse } from '@/types/reviews';
 import { fetchReviews } from '@/lib/fetch/getReviews';
@@ -49,7 +49,7 @@ export default function AdminReviewListClient({
 			
 			
 			
-		} catch (error) {
+		} catch {
      // console.error('Pagination fetch error:', error);
     }finally {
       setLoading(false); // End loading

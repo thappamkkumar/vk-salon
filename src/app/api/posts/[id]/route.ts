@@ -1,7 +1,10 @@
-import { NextResponse } from 'next/server';
+import {NextRequest, NextResponse } from 'next/server';
 import { unlink } from 'fs/promises';
 import path from 'path';
 import { Pool } from 'pg';
+
+//import {Attachment} from '@/types/post';
+
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -10,12 +13,22 @@ const pool = new Pool({
 
 //export const dynamic = 'force-dynamic';
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  if (request.method !== 'DELETE') {
+
+/*export async function DELETE(request: Request, { params }: { params: { id: string } }) {*/
+
+
+
+export async function DELETE(
+	req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+
+  if (req.method !== 'DELETE') {
     return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
   }
-
-  const postId = parseInt(params.id, 10);
+	
+	const { id } = await params;   
+  const postId = parseInt(id, 10);
 
   if (isNaN(postId)) {
     return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
@@ -29,7 +42,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
     const attachments = Array.isArray(rows[0].attachment) ? rows[0].attachment : [];
 
-    const deletePromises = attachments.map(async (file) => {
+    const deletePromises = attachments.map(async (file: { fileName: string; type: string }) => {
       try {
         const filePath = path.resolve('public/vendor/posts', file.fileName);
         await unlink(filePath);

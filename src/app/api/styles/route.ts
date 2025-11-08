@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
  
-import {Styles} from '@/types/styles';
+//import {Styles} from '@/types/styles';
 
 
 const pool = new Pool({
@@ -63,8 +63,9 @@ export async function POST(req: NextRequest)
 		
 		// Insert into DB
     const insertQuery = `INSERT INTO styles (image) VALUES ($1) RETURNING *;`;
-    const result = await pool.query(insertQuery, [fileName]);
-    const newStyle = result.rows[0];
+    
+		await pool.query(insertQuery, [fileName]);
+    //const newStyle = result.rows[0];
 		
 		return NextResponse.json({ message: 'Style created successfully' , status: true});
   } catch (error) {
@@ -83,7 +84,7 @@ export async function GET(req: NextRequest) {
   const direction = searchParams.get('direction') || 'next'; // 'next' or 'prev'
   const limit = 20;
 
-  let query = `
+  const query = `
     SELECT * FROM styles
     WHERE $1::int IS NULL OR 
       ${direction === 'next' ? 'id < $1' : 'id > $1'}
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
     // For prev, reverse the order to maintain consistency
     if (direction === 'prev') styleData.reverse();
 		
-		const mappedStyleData = styleData.map((style: any) => {
+		const mappedStyleData = styleData.map((style) => {
 			const formattedDate = new Date(style.created_at).toLocaleDateString('en-GB', {
 				day: '2-digit',
 				month: 'long', // "May"
@@ -136,12 +137,12 @@ export async function GET(req: NextRequest) {
 
     if (nextCursor !== null) {
       const nextRes = await pool.query(hasNextQuery, [nextCursor]);
-      hasNext = nextRes.rowCount > 0;
+      hasNext = ( nextRes.rowCount ?? 0 ) > 0;
     }
 
     if (prevCursor !== null) {
       const prevRes = await pool.query(hasPrevQuery, [prevCursor]);
-      hasPrev = prevRes.rowCount > 0;
+      hasPrev = ( prevRes.rowCount ?? 0 ) > 0;
     }
 
     return NextResponse.json({

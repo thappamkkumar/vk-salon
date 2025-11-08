@@ -47,7 +47,7 @@ export default function AdminAppointmentListClient({
 			
 			
 			
-		} catch (error) {
+		} catch  {
      // console.error('Pagination fetch error:', error);
     }finally {
       setLoading(false); // End loading

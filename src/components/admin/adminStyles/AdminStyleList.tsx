@@ -63,7 +63,7 @@ const AdminStyleList = ({ styleList, onDelete, selectStyle }: Props) => {
        
 
        
-    } catch (err) {
+    } catch {
       //console.error('Delete error:', err);
       setMessageBox({
 					message: 'Error deleting style.',

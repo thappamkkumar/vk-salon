@@ -99,7 +99,7 @@ export default function AdminNewStyleForm() {
           type: 'error',
         });
       }
-    } catch(error) {
+    } catch {
 			//console.log(error);
       setMessageBox({
         message: 'Something went wrong.',

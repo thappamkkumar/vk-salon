@@ -1,21 +1,20 @@
 'use client';
 
 import {useState} from 'react';
-import Image from 'next/image';
-
+ 
 import PaginationControls from '@/components/pagination/PaginationControls';
 import Spinner from '@/components/loader/Spinner';
 import ServiceCard from './ServiceCard'; 
 import StyleCarousel from '@/components/styles/StyleCarousel';
  
 import { fetchServices } from '@/lib/fetch/getServices';
-import { Service, ServiceResponse } from '@/types/services';
+import {  ServiceResponse } from '@/types/services';
 
 
 export default function ServiceList({
   initialServicesData,
 }: {
-  initialServicesData: Service;
+  initialServicesData: ServiceResponse;
 }) {
 	
 	const [serviceList, setServiceList] = useState<Style[]>(initialServicesData.services);
@@ -46,7 +45,7 @@ export default function ServiceList({
 			
 			
 			
-		} catch (error) {
+		} catch   {
      // console.error('Pagination fetch error:', error);
     }finally {
       setLoading(false); // End loading

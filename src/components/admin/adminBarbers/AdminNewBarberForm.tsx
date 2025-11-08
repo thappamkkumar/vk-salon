@@ -124,7 +124,7 @@ export default function AdminNewBarberForm() {
           type: 'error',
         });
       }
-    } catch (error) {
+    } catch  {
       setMessageBox({
         message: 'Something went wrong.',
         type: 'error',

@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import AdminContactEditForm from './AdminContactEditForm';
 import { Contact } from '@/types/contact';
-import { useContextState } from '@/context/contextState';
+//import { useContextState } from '@/context/contextState';
 
 interface Props {
   contact: Contact;
 }
 
 export default function AdminContactListWrapper({ contact }: Props) {
-  const { setUploading, setMessageBox } = useContextState();
+  //const { setUploading, setMessageBox } = useContextState();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Contact>(contact);

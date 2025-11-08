@@ -59,11 +59,9 @@ const AdminReviewList = ({ reviewList, onDelete, selectReview }: Props) => {
 				});
       }
         
-
+ 
        
-
-       
-    } catch (err) {
+    } catch   {
       //console.error('Delete error:', err);
       setMessageBox({
 					message: 'Error deleting review.',

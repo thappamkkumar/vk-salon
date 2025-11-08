@@ -16,10 +16,10 @@ export default function AboutSection() {
 			
 			<div className="max-w-4xl px-4 md:px-4 xl:px-0 text-base md:text-lg leading-relaxed text-base">
         <p className="mb-4">
-          At <strong>VK Hair</strong>, grooming is more than just a service - it's an experience. Founded in <strong>2014</strong> by master barber <strong>Bittu</strong>, our salon blends time-honored techniques with modern style to give each client a personalized, polished look.
+          At <strong>VK Hair</strong>, grooming is more than just a service - it&apos;s an experience. Founded in <strong>2014</strong> by master barber <strong>Bittu</strong>, our salon blends time-honored techniques with modern style to give each client a personalized, polished look.
         </p>
         <p className="mb-4">
-          We specialize in everything from classic razor shaves and traditional fades to sharp, contemporary cuts. Whether you're walking in for a quick trim or booking a full grooming session, our team ensures you leave feeling refreshed, confident, and camera-ready.
+          We specialize in everything from classic razor shaves and traditional fades to sharp, contemporary cuts. Whether you&apos;re walking in for a quick trim or booking a full grooming session, our team ensures you leave feeling refreshed, confident, and camera-ready.
         </p>
         <p className="mb-4">
           Our cozy, upscale atmosphere is designed to help you relax while our skilled barbers work their magic. With a commitment to quality, style, and service, VK Hair is your destination for precision, care, and consistency-every single time.
