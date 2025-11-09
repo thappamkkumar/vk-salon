@@ -4,7 +4,8 @@ import { StyleResponse } from '@/types/styles';
 
 export const fetchStyle = async (cursor: number | null = null, direction: 'next' | 'prev' = 'next'): Promise<StyleResponse> => {
 
- const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/styles`);
+ //const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/styles`);
+ const url = new URL(`/api/styles`);
 	if (cursor !== null) url.searchParams.set('cursor', cursor.toString());
 	url.searchParams.set('direction', direction);
 

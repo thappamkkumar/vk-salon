@@ -4,7 +4,7 @@ import {  AppointmentResponse } from '@/types/appointment';
 
 export const fetchAppointment = async (cursor: number | null = null, direction: 'next' | 'prev' = 'next'): Promise<AppointmentResponse> => {
 
- const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/appointments`);
+ const url = new URL(`/api/appointments`);
 	if (cursor !== null) url.searchParams.set('cursor', cursor.toString());
 	url.searchParams.set('direction', direction);
 

@@ -13,7 +13,7 @@ type props = {
 };
 export const fetchHomeData= async (): Promise<props> => {
 
- const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/homeData`);
+ const url = new URL(`/api/homeData`);
 	
 	const res = await fetch(url.toString(),{
     cache: 'no-store', // Ensure SSR: no caching

@@ -4,7 +4,7 @@ import {  ReviewResponse } from '@/types/reviews';
 
 export const fetchReviews = async (cursor: number | null = null, direction: 'next' | 'prev' = 'next'): Promise<ReviewResponse> => {
 
- const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/reviews`);
+ const url = new URL(`/api/reviews`);
 	if (cursor !== null) url.searchParams.set('cursor', cursor.toString());
 	url.searchParams.set('direction', direction);
 
