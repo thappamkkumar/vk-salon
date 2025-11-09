@@ -1,6 +1,6 @@
 // lib/getHomeData.ts
 
-import {  Barber } from '@/types/brabers';
+import {  Barber } from '@/types/barbers';
 import {  Review } from '@/types/reviews';
 import {  Service} from '@/types/services';
 import {  Contact} from '@/types/contact';

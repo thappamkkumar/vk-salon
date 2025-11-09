@@ -50,7 +50,7 @@ export default function AdminContactEditForm({ contact, onCancel, onSave }: Prop
       const form = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       });
 
@@ -74,18 +74,22 @@ export default function AdminContactEditForm({ contact, onCancel, onSave }: Prop
       setUploading(false);
     }
   };
+	
+	const fields: { label: string; name: keyof Contact }[] = [
+  { label: 'Address', name: 'address' },
+  { label: 'Phone', name: 'phone_number' },
+  { label: 'Email', name: 'email' },
+  { label: 'Instagram URL', name: 'instagram_url' },
+  { label: 'YouTube URL', name: 'youtube_url' },
+  { label: 'Facebook URL', name: 'facebook_url' },
+  { label: 'Address URL', name: 'address_url' },
+];
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {[
-        { label: 'Address', name: 'address' },
-        { label: 'Phone', name: 'phone_number' },
-        { label: 'Email', name: 'email' },
-        { label: 'Instagram URL', name: 'instagram_url' },
-        { label: 'YouTube URL', name: 'youtube_url' },
-        { label: 'Facebook URL', name: 'facebook_url' },
-        { label: 'Address URL', name: 'address_url' },
-      ].map(({ label, name }) => (
+      {
+				fields.map(({ label, name }) => (
         <div key={name}>
           <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
           <input

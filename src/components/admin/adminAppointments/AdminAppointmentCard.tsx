@@ -5,7 +5,7 @@ import { Appointment,   } from '@/types/appointment';
 
 type Props = {
   appointment: Appointment; 
-  setSelectedAppointmentIndex: (index: number) => void;
+  setSelectedAppointmentIndex: (index: number | null) => void;
 };
 
 const AdminAppointmentCard = ({ appointment,   setSelectedAppointmentIndex }: Props) => {

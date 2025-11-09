@@ -1,11 +1,11 @@
 export type Contact = {
   id: number;
   address: string;
-  addressUrl: string;
-  phoneNumber: string;
+  address_url: string;
+  phone_number: string;
   email: string;
-  instagramUrl?: string;
-  youtubeUrl?: string;
-  facebookUrl?: string;
+  instagram_url?: string;
+  youtube_url?: string;
+  facebook_url?: string;
    
 };

@@ -1,5 +1,5 @@
 export type Barber = {
-  id: string;
+  id: number;
   name: string;
   contact: string;
   experience: number;

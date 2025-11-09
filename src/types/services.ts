@@ -7,7 +7,7 @@ export type Service = {
 };
 
 export type ServiceResponse = {
-  service: Service[];
+  services: Service[];
   nextCursor: number | null;
   prevCursor: number | null;
   hasNext: boolean;

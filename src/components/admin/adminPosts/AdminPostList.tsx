@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useContextState } from '@/context/contextState';
 import { FaEllipsisV, FaInfoCircle, FaTrash } from 'react-icons/fa';
-import { Posts } from '@/types/posts';
+import { Post } from '@/types/post';
 import ConfirmDialog from '@/components/alertBox/ConfirmDialog';
 
 type Props = {
-  postList: Posts[];
+  postList: Post[];
   onDelete: (id: number) => void;
   selectPost: (postIndex: number, postAttachmentIndex?: number) => void;
 };
@@ -100,7 +100,7 @@ const AdminPostList = ({ postList, onDelete, selectPost }: Props) => {
 								onClick={() => selectPost(index,fileIndex )}>
 									
 									<Image
-										src={file.type == "video" ? file.thumbnail : file.fileName  }
+										src={file.type == "video" ? file.thumbnail || '' : file.fileName || ""  }
 										alt={`Post attachment ${post.id}-Attachment ${fileIndex}`}
 										fill
 										className="object-cover"

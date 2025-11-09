@@ -2,8 +2,9 @@
  
 
 export type Appointment = {
-  fullName: string;
-  phoneNumber: string;
+	id: number; 
+  name: string;
+  phone_number: string;
   styleId: number;
   message: string;
 	created_at?: string;

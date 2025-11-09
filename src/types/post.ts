@@ -1,5 +1,5 @@
 export type Attachment = {
-  filename: string;
+  fileName: string;
   type: 'image' | 'video';
   thumbnail?: string;  
   created_at?: string;  
@@ -9,7 +9,7 @@ export type Attachment = {
 export type Post = {
   id: number; 
   attachment: Attachment[];
-  
+  created_at?: string; 
 };
 
 export type PostResponse = {

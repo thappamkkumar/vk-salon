@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { Post } from '@/types/posts';
+import { Post } from '@/types/post';
 
 export default function PostAttachmentCarousel({
   postList,
@@ -13,9 +13,9 @@ export default function PostAttachmentCarousel({
   setSelectedPostAttachmentIndex,
 }: {
   postList: Post[];
-  postIndex: number; 
+  postIndex: number | null; 
   setSelectedPostIndex: (index: number | null) => void;
-	postAttachmentIndex?: number;
+	postAttachmentIndex?: number | null;
   setSelectedPostAttachmentIndex?: (index: number | null) => void;
 }) {
   const [currentAttIndex, setCurrentAttIndex] = useState(postAttachmentIndex || 0);
@@ -30,6 +30,39 @@ export default function PostAttachmentCarousel({
   const touchStartY = useRef<number | null>(null);
   const mediaRef = useRef<HTMLImageElement | HTMLVideoElement>(null);
 
+
+
+
+
+  useEffect(() => {
+    const preventDefault = (e: TouchEvent | WheelEvent) => {
+      e.preventDefault();
+    };
+
+    // Add non-passive listeners to allow preventDefault to work
+    window.addEventListener('wheel', preventDefault, { passive: false });
+    window.addEventListener('touchmove', preventDefault, { passive: false });
+
+    return () => {
+      window.removeEventListener('wheel', preventDefault);
+      window.removeEventListener('touchmove', preventDefault);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+	
+	
+	
+  // ? Prevent invalid indexing
+  if (postIndex === null || !postList[postIndex]) {
+    return null;
+	}
   const post = postList[postIndex];
   const attachments = post.attachment;
   const currentItem = attachments[currentAttIndex];
@@ -89,13 +122,6 @@ export default function PostAttachmentCarousel({
     }, 300);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -164,21 +190,6 @@ export default function PostAttachmentCarousel({
       : attachmentDirection === 'right'
       ? 'animate-attachment-slide-in-right'
       : '';
-
-  useEffect(() => {
-    const preventDefault = (e: TouchEvent | WheelEvent) => {
-      e.preventDefault();
-    };
-
-    // Add non-passive listeners to allow preventDefault to work
-    window.addEventListener('wheel', preventDefault, { passive: false });
-    window.addEventListener('touchmove', preventDefault, { passive: false });
-
-    return () => {
-      window.removeEventListener('wheel', preventDefault);
-      window.removeEventListener('touchmove', preventDefault);
-    };
-  }, []);
 
   return (
     <div

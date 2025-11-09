@@ -5,7 +5,7 @@ import PostThumbnail from './PostThumbnail';
 import PostAttachmentCarousel from './PostAttachmentCarousel';
 import PaginationControls from '@/components/pagination/PaginationControls';
 import Spinner from '@/components/loader/Spinner';
-import { Post, PostResponse } from '@/types/posts';
+import { Post, PostResponse } from '@/types/post';
 import { fetchPosts } from '@/lib/fetch/getPosts';
 
 

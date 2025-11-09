@@ -33,7 +33,7 @@ export default function AdminReviewListClient({
 		try 
 		{
 			setLoading(true);
-			const  data :BarberResponse = await fetchReviews(cursor, direction);
+			const  data: ReviewResponse = await fetchReviews(cursor, direction);
 			
 			//console.log(data);
 			
@@ -60,7 +60,7 @@ export default function AdminReviewListClient({
 		setReviewList(prev => prev.filter(barber => barber.id !== id));
 	}
 	
-	const selectReview  = (index: number)=>{
+	const selectReview  = (index: number | null)=>{
 		setSelectedReviewIndex(index);
 		 
 	}

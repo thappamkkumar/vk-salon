@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
 
-//import { Post, Attachment } from '@/types/posts';
+import {  Attachment } from '@/types/post';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -130,8 +130,8 @@ export async function GET(req: NextRequest) {
     const mappedPosts = posts.map((post) => {
       const basePath = '/vendor/posts/';
       const thumbPath = '/vendor/post_video_thumbnail/';
-      const mappedAttachments = post.attachment.map((att) => {
-        const updated = {
+      const mappedAttachments = post.attachment.map((att: Attachment) => {
+        const updated  = {
           ...att,
           fileName: `${basePath}${att.fileName}`,
         };

@@ -8,7 +8,7 @@ import Spinner from '@/components/loader/Spinner';
 import PostAttachmentCarousel from '@/components/posts/PostAttachmentCarousel';
 import PaginationControls from '@/components/pagination/PaginationControls';
 
-import { Post, PostResponse } from '@/types/posts';
+import { Post, PostResponse } from '@/types/post';
 import { fetchPosts } from '@/lib/fetch/getPosts';
 
 export default function AdminPostListClient({
@@ -61,7 +61,7 @@ export default function AdminPostListClient({
 		setPostList(prev => prev.filter(style => style.id !== id));
 	}
 	
-	const selectPost = (postIndex: number, postAttachmentIndex?: number)=>{
+	const selectPost = (postIndex: number | null, postAttachmentIndex?: number | null)=>{
 		setSelectedPostIndex(postIndex);
 		setSelectedPostAttachmentIndex(postAttachmentIndex || null);
 	}

@@ -12,7 +12,7 @@ import {
   FaConciergeBell,
   FaInfoCircle,
 } from 'react-icons/fa';
-import { NavItem } from '@/types/naviagtion';
+//import { NavItem } from '@/types/navigation';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function Navigation() {
   //if (isAdminRoute) return null;
 	
 
-  const navItems: NavItem[] = [
+  const navItems = [
     { href: '/', label: 'Home', icon: <FaHome /> },
     { href: '/posts', label: 'Posts', icon: <FaClipboardList /> },
     { href: '/styles', label: 'Styles', icon: <FaCut /> },
@@ -61,7 +61,7 @@ export default function Navigation() {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
-        router.replace(`/#${id}`, undefined, { scroll: false });
+        router.replace(`/#${id}`,  { scroll: false });
         setIsOpen(false);
       }
     } else {

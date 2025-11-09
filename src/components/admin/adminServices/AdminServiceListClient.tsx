@@ -17,7 +17,7 @@ import { fetchServices } from '@/lib/fetch/getServices';
 export default function AdminServiceListClient({
   initialServicesData,
 }: {
-  initialServicesData: StyleResponse;
+  initialServicesData: ServiceResponse;
 }) {
 
 	const [serviceList, setServiceList] = useState<Service[]>(initialServicesData.services);

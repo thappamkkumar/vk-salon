@@ -6,7 +6,7 @@ import ReviewList from './ReviewList';
 import PaginationControls from '@/components/pagination/PaginationControls';
 import Spinner from '@/components/loader/Spinner'; 
 
-import {  ReviewResponse } from '@/types/reviews';
+import {Review,  ReviewResponse } from '@/types/reviews';
 import { fetchReviews } from '@/lib/fetch/getReviews';
 
 
@@ -18,7 +18,7 @@ export default function ReviewListClient({
   initialReviewData: ReviewResponse;
 }) {
 
-	const [reviewList, setReviewList] = useState<Style[]>(initialReviewData.reviews);
+	const [reviewList, setReviewList] = useState<Review[]>(initialReviewData.reviews);
   const [nextCursor, setNextCursor] = useState<number | null>(initialReviewData.nextCursor);
   const [prevCursor, setPrevCursor] = useState<number | null>(initialReviewData.prevCursor);
   const [hasNext, setHasNext] = useState(initialReviewData.hasNext);
@@ -30,7 +30,7 @@ export default function ReviewListClient({
 		try 
 		{
 			setLoading(true);
-			const  data :BarberResponse = await fetchReviews(cursor, direction);
+			const  data: ReviewResponse = await fetchReviews(cursor, direction);
 			
 			//console.log(data);
 			

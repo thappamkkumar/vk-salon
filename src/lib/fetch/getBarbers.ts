@@ -1,6 +1,6 @@
 // lib/getBarbers.ts
 
-import {  BarberResponse } from '@/types/brabers';
+import {  BarberResponse } from '@/types/barbers';
 
 export const fetchBarber= async (cursor: number | null = null, direction: 'next' | 'prev' = 'next'): Promise<BarberResponse> => {
 

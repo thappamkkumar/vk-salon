@@ -103,15 +103,15 @@ export default function AdminBarberListClient({
 					
 				}
 			</div>
-			
+			 
 			{selectedBarberIndex !== null && (
-				<StyleCarousel  
+				 <StyleCarousel  
 					styleList={barberList}
 					styleIndex={selectedBarberIndex}
 					setSelectedStyleIndex={setSelectedBarberIndex}
-				/>
+				/> 
 			)}
-					
+			 
 					
     </>
   ); 

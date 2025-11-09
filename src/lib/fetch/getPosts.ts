@@ -1,6 +1,6 @@
 // lib/posts.ts
 
-import { PostResponse } from '@/types/posts';
+import { PostResponse } from '@/types/post';
 
 export const fetchPosts = async (
   cursor: number | null = null,

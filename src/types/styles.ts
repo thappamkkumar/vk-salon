@@ -1,6 +1,7 @@
 export type Style = {
 	id: number;
-	image: string[];
+	//image: string[];
+	image: string;
 	 created_at?: string;  
 };
 

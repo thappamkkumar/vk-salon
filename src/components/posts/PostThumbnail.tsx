@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import { Post } from '@/types/posts';
+import { Post } from '@/types/post';
 import { FaPlay, FaLayerGroup } from 'react-icons/fa';
 
 export default function PostThumbnail({
@@ -38,7 +38,7 @@ export default function PostThumbnail({
         style={{ aspectRatio: `${1 / aspectRatio}` }}
       >
         <Image
-          src={displaySrc}
+          src={displaySrc || ""}
           alt={`Thumbnail for post ${post.id}`}
           fill
           className="object-cover rounded hover:opacity-50"

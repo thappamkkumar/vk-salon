@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { FaPhoneAlt, FaCut } from 'react-icons/fa'; 
  
-import {  Barber } from '@/types/brabers';
+import {  Barber } from '@/types/barbers';
  
 
 
@@ -32,7 +32,7 @@ export default async function BarberSection({
                 src={barber.image}
                 alt={barber.name}
                 fill
-								sizes={150}
+								sizes="150px"
                 className="rounded-full object-cover"
               />
             </div>

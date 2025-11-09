@@ -6,7 +6,7 @@ import { Review } from '@/types/reviews';
 
 type Props = {
   review: Review;
-  setSelectedStyleIndex: (index: number) => void;
+  setSelectedStyleIndex: (index: number | null) => void;
 };
 
 const AdminReviewCard = ({ review, setSelectedStyleIndex }: Props) => {

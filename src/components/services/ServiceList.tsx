@@ -8,7 +8,7 @@ import ServiceCard from './ServiceCard';
 import StyleCarousel from '@/components/styles/StyleCarousel';
  
 import { fetchServices } from '@/lib/fetch/getServices';
-import {  ServiceResponse } from '@/types/services';
+import { Service, ServiceResponse } from '@/types/services';
 
 
 export default function ServiceList({
@@ -17,7 +17,7 @@ export default function ServiceList({
   initialServicesData: ServiceResponse;
 }) {
 	
-	const [serviceList, setServiceList] = useState<Style[]>(initialServicesData.services);
+	const [serviceList, setServiceList] = useState<Service[]>(initialServicesData.services);
   const [nextCursor, setNextCursor] = useState<number | null>(initialServicesData.nextCursor);
   const [prevCursor, setPrevCursor] = useState<number | null>(initialServicesData.prevCursor);
   const [hasNext, setHasNext] = useState(initialServicesData.hasNext);
