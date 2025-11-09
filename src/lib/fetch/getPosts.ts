@@ -7,7 +7,7 @@ export const fetchPosts = async (
   direction: 'next' | 'prev' = 'next'
 ): Promise<PostResponse> => {
 
-  const url = new URL(`/api/posts`);
+  const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/posts`);
   if (cursor !== null) url.searchParams.set('cursor', cursor.toString());
   url.searchParams.set('direction', direction);
 
