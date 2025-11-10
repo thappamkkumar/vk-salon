@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Update user's email in Supabase
-    const { data, error } = await supabase
+    const {  error } = await supabase
       .from("users")
       .update({ email })
       .eq("id", userId);

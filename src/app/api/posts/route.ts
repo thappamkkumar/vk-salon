@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
 }
 
 // ----------------- GET (Fetch) -----------------
-export async function GET(req: NextRequest) {
+export async function GET( ) {
   const limit = 20;
 
   try {

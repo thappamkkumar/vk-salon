@@ -45,27 +45,28 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
 
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        const customUser = user as { id: number; role: string };
-        token.id = customUser.id;
-        token.role = customUser.role;
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
-      const sessionUser = session?.user as { id?: number; role?: string } | undefined;
-      const customToken = token as { id?: number; role?: string };
-
-      if (sessionUser && customToken.id) {
-        sessionUser.id = customToken.id;
-        sessionUser.role = customToken.role;
-      }
-      return session;
-    },
+callbacks: {
+  async jwt({ token, user }) {
+    if (user && "id" in user && "role" in user) {
+      token.id = user.id;
+      token.role = user.role;
+    }
+    return token;
   },
+
+  async session({ session, token }) {
+    if (
+      session.user &&
+      typeof token.id === "number" &&
+      typeof token.role === "string"
+    ) {
+      session.user.id = token.id;
+      session.user.role = token.role;
+    }
+    return session;
+  },
+},
+
 
   pages: {
     signIn: "/login",
