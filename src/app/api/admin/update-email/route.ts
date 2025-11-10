@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
-import { Pool } from "pg";
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-});
+import { supabase } from "@/lib/supabaseServer";
 
 export async function POST(req: NextRequest) {
   try {
+    // Get session from NextAuth
     const session = await getServerSession(authOptions);
-		const sessionUser = session?.user as { id?: number; role?: string } | undefined;
+    const sessionUser = session?.user as { id?: number; role?: string } | undefined;
 
     if (!sessionUser) {
       return NextResponse.json({ status: false, message: "Unauthorized" }, { status: 401 });
@@ -24,14 +20,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: false, message: "Invalid email" }, { status: 400 });
     }
 
-    const result = await pool.query(
-      "UPDATE users SET email = $1 WHERE id = $2",
-      [email, userId]
-    );
+    // Update user's email in Supabase
+    const { data, error } = await supabase
+      .from("users")
+      .update({ email })
+      .eq("id", userId);
 
-    if (result.rowCount === 0) {
-      return NextResponse.json({ status: false, message: "User not found" }, { status: 404 });
+    if (error) { 
+      return NextResponse.json({ status: false, message: "Failed to update email" }, { status: 500 });
     }
+ 
 
     return NextResponse.json({ status: true, message: "Email updated successfully" });
   } catch (error) {

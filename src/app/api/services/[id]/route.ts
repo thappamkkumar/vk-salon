@@ -1,52 +1,62 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
-import fs from 'fs';
-import path from 'path';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
-//export const dynamic = 'force-dynamic';
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseServer";
 
 export async function DELETE(
-	req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-	
-	const { id } = await params;   
+  const { id } = await params;
   const serviceId = Number(id);
-	
 
   if (isNaN(serviceId)) {
-    return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
 
   try {
-    // Get image filename
-    const selectResult = await pool.query('SELECT * FROM services WHERE id = $1', [serviceId]);
+    // Fetch service row
+    const { data: service, error: fetchError } = await supabase
+      .from("services")
+      .select("image")
+      .eq("id", serviceId)
+      .single();
 
-    if (selectResult.rowCount === 0) {
-      return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+    if (fetchError || !service) {
+      return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }
 
-    const service= selectResult.rows[0];
-    const imageFile = service.image;
+    // Delete image from Supabase Storage
+    const { error: storageError } = await supabase.storage
+      .from("services")
+      .remove([service.image]);
 
-    // Delete file from disk
-    const imagePath = path.join(process.cwd(), 'public/vendor/services', imageFile);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+    if (storageError) {
+      console.error("Failed to delete image from storage:", storageError);
+      // Continue anyway to remove DB record
     }
 
-    // Delete row from DB
-    await pool.query('DELETE FROM services WHERE id = $1', [serviceId]);
+    // Delete DB record
+    const { error: deleteError } = await supabase
+      .from("services")
+      .delete()
+      .eq("id", serviceId);
 
-    return NextResponse.json({ success: true, message: 'Service deleted successfully' }, { status: 200 });
+    if (deleteError) {
+      console.error("DB delete error:", deleteError);
+      return NextResponse.json(
+        { error: "Failed to delete service" },
+        { status: 500 }
+      );
+    }
 
+    return NextResponse.json(
+      { success: true, message: "Service deleted successfully" },
+      { status: 200 }
+    );
   } catch (err) {
-    console.error('Error deleting style:', err);
-    return NextResponse.json({ error: `Failed to delete service: ${err}` }, { status: 500 });
+    console.error("Error deleting service:", err);
+    return NextResponse.json(
+      { error: `Failed to delete service: ${err}` },
+      { status: 500 }
+    );
   }
 }

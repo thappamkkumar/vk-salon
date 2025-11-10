@@ -1,3 +1,84 @@
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseServer";
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const reviewId = Number(id);
+
+  if (isNaN(reviewId)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  try {
+    // 1?? Fetch the review to get the image name
+    const { data: review, error: selectError } = await supabase
+      .from("reviews")
+      .select("id, image")
+      .eq("id", reviewId)
+      .single();
+
+    if (selectError) {
+      console.error("Error fetching review:", selectError);
+      return NextResponse.json(
+        { error: "Failed to fetch review" },
+        { status: 500 }
+      );
+    }
+
+    if (!review) {
+      return NextResponse.json(
+        { error: "Review not found" },
+        { status: 404 }
+      );
+    }
+
+    const imageFile = review.image;
+
+    // 2?? Delete image from Supabase Storage
+    if (imageFile) {
+      const { error: deleteFileError } = await supabase.storage
+        .from("reviews")
+        .remove([imageFile]);
+
+      if (deleteFileError) {
+        console.error("Error deleting image:", deleteFileError);
+        // (Optional) You can continue even if file delete fails
+      }
+    }
+
+    // 3?? Delete record from DB
+    const { error: deleteError } = await supabase
+      .from("reviews")
+      .delete()
+      .eq("id", reviewId);
+
+    if (deleteError) {
+      console.error("Error deleting DB record:", deleteError);
+      return NextResponse.json(
+        { error: "Failed to delete review record" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "Review deleted successfully" },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Error deleting review:", err);
+    return NextResponse.json(
+      { error: `Failed to delete review: ${err}` },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+/*
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import fs from 'fs';
@@ -50,3 +131,4 @@ export async function DELETE(
     return NextResponse.json({ error: `Failed to delete review: ${err}` }, { status: 500 });
   }
 }
+*/

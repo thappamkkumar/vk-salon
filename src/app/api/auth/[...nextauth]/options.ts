@@ -1,6 +1,6 @@
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import pool from "@/lib/db";
+import { supabase } from "@/lib/supabaseServer";
 import bcrypt from "bcrypt";
 
 export const authOptions: AuthOptions = {
@@ -17,23 +17,24 @@ export const authOptions: AuthOptions = {
         }
 
         try {
-          const result = await pool.query(
-            "SELECT id, email, role, password_hash FROM users WHERE email = $1",
-            [credentials.email]
-          );
+          // Fetch user from Supabase
+          const { data, error } = await supabase
+            .from("users")
+            .select("id, email, role, password_hash")
+            .eq("email", credentials.email)
+            .single();
 
-          const user = result.rows[0];
-          if (!user) return null;
+          if (error || !data) return null;
 
           const isValid = await bcrypt.compare(
             credentials.password,
-            user.password_hash
+            data.password_hash
           );
           if (!isValid) return null;
 
-          return { id: user.id, email: user.email, role: user.role };
-        } catch (error) {
-          console.error("Authorize error:", error);
+          return { id: data.id, email: data.email, role: data.role };
+        } catch (err) {
+          console.error("Authorize error:", err);
           throw new Error("Server error during login");
         }
       },
@@ -47,16 +48,16 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-       const customUser = user as unknown as { id: number; role: string };
-			token.id = customUser.id;
-			token.role = customUser.role;
+        const customUser = user as { id: number; role: string };
+        token.id = customUser.id;
+        token.role = customUser.role;
       }
       return token;
     },
 
     async session({ session, token }) {
-			const sessionUser = session?.user as { id?: number; role?: string } | undefined;
-			const customToken = token as { id?: number; role?: string };
+      const sessionUser = session?.user as { id?: number; role?: string } | undefined;
+      const customToken = token as { id?: number; role?: string };
 
       if (sessionUser && customToken.id) {
         sessionUser.id = customToken.id;

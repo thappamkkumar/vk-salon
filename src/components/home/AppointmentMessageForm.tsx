@@ -54,7 +54,7 @@ const AppointmentMessageForm = () => {
       payload.append('phoneNumber', formData.phoneNumber);
       payload.append('message', formData.message);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/appointment`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/appointments`, {
         method: 'POST',
         body: payload,
       });

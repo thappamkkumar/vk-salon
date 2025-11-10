@@ -1,3 +1,129 @@
+
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseServer"; // your Supabase client
+
+// --- Utility validation functions ---
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPhone(phone: string) {
+  return /^\d{10,15}$/.test(phone);
+}
+
+function isValidUrl(url: string) {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// --- PUT: Insert or update contact ---
+export async function PUT(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+
+    const contactFields = {
+      address: formData.get("address")?.toString().trim() || "",
+      address_url: formData.get("address_url")?.toString().trim() || "",
+      phone_number: formData.get("phone_number")?.toString().trim() || "",
+      email: formData.get("email")?.toString().trim() || "",
+      instagram_url: formData.get("instagram_url")?.toString().trim() || null,
+      youtube_url: formData.get("youtube_url")?.toString().trim() || null,
+      facebook_url: formData.get("facebook_url")?.toString().trim() || null,
+    };
+
+    // --- Validation ---
+    if (!contactFields.address)
+      return NextResponse.json({ error: "Address is required." }, { status: 400 });
+
+    if (!isValidPhone(contactFields.phone_number))
+      return NextResponse.json({ error: "Phone number is invalid." }, { status: 400 });
+
+    if (!isValidEmail(contactFields.email))
+      return NextResponse.json({ error: "Email is invalid." }, { status: 400 });
+
+    if (!isValidUrl(contactFields.address_url))
+      return NextResponse.json({ error: "Address URL is invalid." }, { status: 400 });
+
+    // --- Check if contact exists ---
+    const { data: existing, error: fetchError } = await supabase
+      .from("contact")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (fetchError) throw fetchError;
+
+    if (!existing || existing.length === 0) {
+      // --- Insert new contact ---
+      const { data: insertData, error: insertError } = await supabase
+        .from("contact")
+        .insert([
+          {
+            ...contactFields,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      return NextResponse.json({ contact: insertData });
+    } else {
+      // --- Update existing contact ---
+      const contactId = existing[0].id;
+      const { data: updateData, error: updateError } = await supabase
+        .from("contact")
+        .update({
+          ...contactFields,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", contactId)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      return NextResponse.json({ contact: updateData });
+    }
+  } catch (error) {
+    console.error("PUT /api/admin/contact error:", error);
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+  }
+}
+
+// --- GET: Retrieve latest contact ---
+export async function GET() {
+  try {
+    const { data, error } = await supabase
+      .from("contact")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      // Table empty ? return empty object (instead of error)
+      return NextResponse.json({});
+    }
+
+    const contact = data[0];
+    return NextResponse.json(contact);
+  } catch (error) {
+    console.error("GET /api/admin/contact error:", error);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
+}
+
+
+/*
+
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 
@@ -135,3 +261,4 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 }
+*/

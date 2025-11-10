@@ -1,43 +1,49 @@
-import { NextResponse } from 'next/server';
-import { Pool } from 'pg';
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseServer"; // Supabase config
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
-// --- Helper function to fetch services ---
+// -------------------- Helper: Fetch Services --------------------
 async function fetchServices() {
-  const query = `
-    SELECT * FROM services
-    ORDER BY created_at DESC
-    LIMIT 10
-  `;
-  const result = await pool.query(query);
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
 
-  return result.rows.map((service) => { 
-    return {
-      id: service.id,
-      title: service.title,
-      price: service.price,
-      image: `/vendor/services/${service.image}`,
-       
-    };
-  });
+  if (error) throw error;
+
+  // Generate signed URLs for private images
+  const mappedServices = await Promise.all(
+    (data || []).map(async (service) => {
+      const { data: signed, error: signedError } = await supabase.storage
+        .from("services")
+        .createSignedUrl(service.image, 60 * 60); // 1 hour
+
+      const fileUrl = !signedError && signed?.signedUrl ? signed.signedUrl : "";
+
+      return {
+        id: service.id,
+        title: service.title,
+        price: service.price,
+        image: fileUrl,
+      };
+    })
+  );
+
+  return mappedServices;
 }
 
-// --- Helper function to fetch contact info ---
+// -------------------- Helper: Fetch Contact --------------------
 async function fetchContact() {
-  const query = `
-    SELECT * FROM contact
-    ORDER BY created_at DESC
-    LIMIT 1
-  `;
-  const result = await pool.query(query);
+  const { data, error } = await supabase
+    .from("contact")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(1);
 
-  if (result.rows.length === 0) return {};
+  if (error) throw error;
+  if (!data || data.length === 0) return {};
 
-  const contact = result.rows[0];
+  const contact = data[0];
   return {
     id: contact.id,
     address: contact.address,
@@ -50,59 +56,70 @@ async function fetchContact() {
   };
 }
 
-
-// --- Helper function to fetch barbers info ---
+// -------------------- Helper: Fetch Barbers --------------------
 async function fetchBarbers() {
-  const query = `
-    SELECT * FROM barbers
-    ORDER BY created_at DESC
-    LIMIT 10
-  `;
-  const result = await pool.query(query);
+  const { data, error } = await supabase
+    .from("barbers")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
 
+  if (error) throw error;
 
-  return result.rows.map((barber) => {
-     
+  const mappedBarbers = await Promise.all(
+    (data || []).map(async (barber) => {
+      const { data: signed, error: signedError } = await supabase.storage
+        .from("barbers")
+        .createSignedUrl(barber.image, 60 * 60);
 
-    return {
-      id: barber.id,
-			name: barber.name,
-			contact: barber.contact,
-			experience: barber.experience, 
-			image: `/vendor/barbers/${barber.image}`, 
-    };
-  });
+      const fileUrl = !signedError && signed?.signedUrl ? signed.signedUrl : "";
+
+      return {
+        id: barber.id,
+        name: barber.name,
+        contact: barber.contact,
+        experience: barber.experience,
+        image: fileUrl,
+      };
+    })
+  );
+
+  return mappedBarbers;
 }
 
-
-// --- Helper function to fetch reviews info ---
+// -------------------- Helper: Fetch Reviews --------------------
 async function fetchReviews() {
-  const query = `
-    SELECT * FROM reviews
-    ORDER BY created_at DESC
-    LIMIT 10
-  `;
-  const result = await pool.query(query);
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
 
+  if (error) throw error;
 
-  return result.rows.map((review) => {
-      
-    return {
-			id: review.id,
-			name: review.name, 
-			address: review.address, 
-			rating: review.rating, 
-			message: review.message,  
-			image: `/vendor/reviews/${review.image}`,
-		 
-    };
-  });
+  const mappedReviews = await Promise.all(
+    (data || []).map(async (review) => {
+      const { data: signed, error: signedError } = await supabase.storage
+        .from("reviews")
+        .createSignedUrl(review.image, 60 * 60);
+
+      const fileUrl = !signedError && signed?.signedUrl ? signed.signedUrl : "";
+
+      return {
+        id: review.id,
+        name: review.name,
+        address: review.address,
+        rating: review.rating,
+        message: review.message,
+        image: fileUrl,
+      };
+    })
+  );
+
+  return mappedReviews;
 }
 
-
-
-
-// --- API Route Handler ---
+// -------------------- API Handler --------------------
 export async function GET(): Promise<NextResponse> {
   try {
     const [services, contact, barbers, reviews] = await Promise.all([
@@ -119,7 +136,7 @@ export async function GET(): Promise<NextResponse> {
       reviews,
     });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Database error' }, { status: 500 });
+    console.error("Error fetching barber shop data:", error);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 }

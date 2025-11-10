@@ -1,73 +1,80 @@
-import {NextRequest, NextResponse } from 'next/server';
-import { unlink } from 'fs/promises';
-import path from 'path';
-import { Pool } from 'pg';
-
-//import {Attachment} from '@/types/post';
-
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
-//export const dynamic = 'force-dynamic';
-
-
-/*export async function DELETE(request: Request, { params }: { params: { id: string } }) {*/
-
-
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseServer";
 
 export async function DELETE(
-	req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-
-  if (req.method !== 'DELETE') {
-    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+  if (req.method !== "DELETE") {
+    return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
   }
-	
-	const { id } = await params;   
+
+  const { id } = await params;
   const postId = parseInt(id, 10);
 
   if (isNaN(postId)) {
-    return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
+    return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
   }
 
   try {
-    const { rows } = await pool.query('SELECT attachment FROM posts WHERE id = $1', [postId]);
-    if (rows.length === 0) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    // 1?? Fetch attachments for this post
+    const { data: postData, error: fetchError } = await supabase
+      .from("posts")
+      .select("attachment")
+      .eq("id", postId)
+      .single();
+
+    if (fetchError || !postData) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    const attachments = Array.isArray(rows[0].attachment) ? rows[0].attachment : [];
+    const attachments = Array.isArray(postData.attachment)
+      ? postData.attachment
+      : [];
 
+    // 2?? Delete files from Supabase Storage
     const deletePromises = attachments.map(async (file: { fileName: string; type: string }) => {
-      try {
-        const filePath = path.resolve('public/vendor/posts', file.fileName);
-        await unlink(filePath);
-      } catch (err) {
-        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      // Images & videos stored in `posts` bucket
+      const { error: deleteError } = await supabase.storage
+        .from("posts")
+        .remove([file.fileName]);
+
+      if (deleteError) {
+        console.error("File delete error:", deleteError);
       }
 
-      if (file.type === 'video') {
-        try {
-          const baseName = path.parse(file.fileName).name;
-          const thumbnailPath = path.resolve('public/vendor/post_video_thumbnail', `${baseName}.jpg`);
-          await unlink(thumbnailPath);
-        } catch (err) {
-          if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      // If it's a video, also delete its thumbnail
+      if (file.type === "video") {
+        const baseName = file.fileName.split(".")[0];
+        const { error: thumbError } = await supabase.storage
+          .from("post_video_thumbnail")
+          .remove([`${baseName}.jpg`]);
+
+        if (thumbError) {
+          console.error("Thumbnail delete error:", thumbError);
         }
       }
     });
 
     await Promise.all(deletePromises);
 
-    await pool.query('DELETE FROM posts WHERE id = $1', [postId]);
+    // 3?? Delete post record from Supabase DB
+    const { error: dbError } = await supabase
+      .from("posts")
+      .delete()
+      .eq("id", postId);
 
-    return NextResponse.json({ message: 'Post and associated files deleted successfully' }, { status: 200 });
+    if (dbError) {
+      console.error("DB delete error:", dbError);
+      return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
+    }
+
+    return NextResponse.json(
+      { message: "Post and files deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Server error:', error instanceof Error ? error.stack : error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error("Server error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

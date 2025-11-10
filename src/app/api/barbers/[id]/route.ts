@@ -1,3 +1,86 @@
+
+
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseServer";
+
+// --- DELETE Barber (remove from Supabase DB + private bucket) ---
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const barberId = Number(id);
+
+  if (isNaN(barberId)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  try {
+    // 1?? Get barber record
+    const { data: barber, error: selectError } = await supabase
+      .from("barbers")
+      .select("*")
+      .eq("id", barberId)
+      .single();
+
+    if (selectError) {
+      console.error("Select error:", selectError);
+      return NextResponse.json(
+        { error: "Database error", details: selectError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!barber) {
+      return NextResponse.json({ error: "Barber not found" }, { status: 404 });
+    }
+
+    const imageFile = barber.image;
+
+    // 2?? Delete file from Supabase Storage
+    if (imageFile) {
+      const { error: storageError } = await supabase.storage
+        .from("barbers")
+        .remove([imageFile]);
+
+      if (storageError) {
+        console.error("Storage delete error:", storageError);
+        // we still continue to delete DB record
+      }
+    }
+
+    // 3?? Delete DB record
+    const { error: deleteError } = await supabase
+      .from("barbers")
+      .delete()
+      .eq("id", barberId);
+
+    if (deleteError) {
+      console.error("Delete error:", deleteError);
+      return NextResponse.json(
+        { error: "Failed to delete barber", details: deleteError.message },
+        { status: 500 }
+      );
+    }
+
+    // ? Success
+    return NextResponse.json(
+      { success: true, message: "Barber deleted successfully" },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Error deleting barber:", err);
+    return NextResponse.json(
+      { error: `Failed to delete barber: ${err}` },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+/*
+
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import fs from 'fs';
@@ -50,3 +133,4 @@ export async function DELETE(
     return NextResponse.json({ error: `Failed to delete barber: ${err}` }, { status: 500 });
   }
 }
+*/

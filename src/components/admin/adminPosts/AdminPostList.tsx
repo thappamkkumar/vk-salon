@@ -72,8 +72,7 @@ const AdminPostList = ({ postList, onDelete, selectPost }: Props) => {
       setDeleting(false);
       setConfirmId(null);
     }
-  };
-
+  }; 
   return (
     <div className="relative      ">
       <table className="min-w-full border border-gray-200 whitespace-nowrap">
