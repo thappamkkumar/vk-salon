@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import FooterBottom from './FooterBottom';
 
 export default function Footer() {
   const router = useRouter();
@@ -95,10 +96,12 @@ export default function Footer() {
           </button>
         </div>
       </div>
-
-      <div className="mt-12 border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
-        © {new Date().getFullYear()} VK Hair. All rights reserved.
-      </div>
+ 
+			
+			
+			<FooterBottom/>
+			
+			
     </footer>
   );
 }
