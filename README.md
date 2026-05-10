@@ -25,17 +25,19 @@ The platform allows customers to explore services, browse styles, read reviews, 
 ### Style Showcase
 ![Styles](./screenshots/styles.png)
 
-### Appointment Booking
-![Booking](./screenshots/booking.png)
-
 ### Reviews Section
 ![Reviews](./screenshots/reviews.png)
 
+### Posts Section
+![Reviews](./screenshots/posts.png)
+
+### Appointment Booking
+![Booking](./screenshots/appointment.png)
+
+![Booking](./screenshots/bookings.png)
+
 ### Admin Management
 ![Admin Management](./screenshots/admin-management.png)
-
-### Mobile Responsive Design
-![Responsive Design](./screenshots/mobile.png)
 
 ---
 
