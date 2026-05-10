@@ -113,7 +113,7 @@ VK Salon follows a modern Next.js full-stack architecture using server-side rend
 
 ### Database & Storage
 - PostgreSQL
-- Firebase Storage
+- Supabase
 
 ### Deployment
 - Vercel Hosting
@@ -134,7 +134,7 @@ VK Salon follows a modern Next.js full-stack architecture using server-side rend
 
 ### Database & Storage
 - PostgreSQL
-- Firebase
+- Supabase
 
 ### Deployment & Infrastructure
 - Vercel
@@ -204,15 +204,12 @@ Implemented secure admin authentication using NextAuth with protected dashboard 
 ## 📁 Project Structure
 
 ```bash
-vk-salon/
+src/
 ├── app/
 ├── components/
 ├── lib/
 ├── context/
-├── types/
-├── public/
-├── styles/
-└── utils/
+├── types/  
 ```
 
 ---
